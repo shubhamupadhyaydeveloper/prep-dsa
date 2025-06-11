@@ -17,7 +17,7 @@ class Heap:
     def heapifyInsert(self, index, heapType):
         if index <= 1:
             return
-        
+
         parentIndex = index // 2
 
         if heapType == "Min":
@@ -33,12 +33,74 @@ class Heap:
                 )
                 self.heapifyInsert(parentIndex, heapType)
 
-
     def insertValue(self, value, heapType):
-        if self.heapSize == self.maxSize:
+        if self.heapSize + 1 == self.maxSize:
             return "Heap is full"
 
-        self.list[len(self.list)] = value
+        self.list[self.heapSize + 1] = value
         self.heapSize += 1
 
         self.heapifyInsert(len(self.list), heapType)
+        return "Value is inserted"
+
+    def heapifyRemove(self, index, heapType):
+        leftIndex = index * 2
+        rightIndex = index * 2 + 1
+        swapChild = 0
+
+        if self.heapSize < index:
+            return
+
+        elif self.heapSize == index:
+            if heapType == "Max":
+                if self.list[leftIndex] > self.list[index]:
+                    self.list[leftIndex], self.list[index] = (
+                        self.list[index],
+                        self.list[leftIndex],
+                    )
+                return
+            else:
+                if self.list[leftIndex] > self.list[index]:
+                    self.list[leftIndex], self.list[index] = (
+                        self.list[index],
+                        self.list[leftIndex],
+                    )
+                return
+
+        else:
+            if heapType == "Max":
+                if self.list[leftIndex] > self.list[rightIndex]:
+                    swapChild = leftIndex
+                else:
+                    swapChild = rightIndex
+
+                if self.list[swapChild] > self.list[index]:
+                    self.list[swapChild], self.list[index] = (
+                        self.list[index],
+                        self.list[swapChild],
+                    )
+            else:
+                if self.list[leftIndex] < self.list[rightIndex]:
+                    swapChild = leftIndex
+                else:
+                    swapChild = rightIndex
+
+                if self.list[swapChild] < self.list[index]:
+                    self.list[swapChild], self.list[index] = (
+                        self.list[index],
+                        self.list[swapChild],
+                    )
+
+        self.heapifyRemove(swapChild, heapType)
+
+    def removeValue(self, heapType):
+        if self.heapSize == 0:
+            return None
+
+        lastNode = self.list[self.heapSize]
+        self.list[self.heapSize] = None
+        self.list[1] = lastNode
+
+        self.heapSize -= 1
+
+        self.heapifyRemove(1, heapType)
